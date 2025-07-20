@@ -1,0 +1,45 @@
+name: 🚀 Deploy KingDefrag Python 3.11
+
+on:
+  push:
+      branches: [ main ]
+
+      env:
+        PROJECT_ID: kinggroup-website
+
+        jobs:
+          deploy:
+              runs-on: ubuntu-latest
+                  steps:
+                      - uses: actions/checkout@v4
+                          - uses: actions/setup-python@v4
+                                with:
+                                        python-version: '3.11'
+                                            - uses: google-github-actions/auth@v2
+                                                  with:
+                                                          credentials_json: ${{ secrets.GCP_SA_KEY }}
+                                                              - uses: google-github-actions/setup-gcloud@v2
+                                                                    with:
+                                                                            project_id: ${{ env.PROJECT_ID }}
+                                                                                - run: |
+                                                                                        cat > app.yaml << EOF
+                                                                                                runtime: python311
+                                                                                                        service: kingdefrag
+                                                                                                                EOF
+                                                                                                                        cat > requirements.txt << EOF
+                                                                                                                                Flask==3.0.0
+                                                                                                                                        EOF
+                                                                                                                                                cat > main.py << EOF
+                                                                                                                                                        from flask import Flask, jsonify
+                                                                                                                                                                app = Flask(__name__)
+                                                                                                                                                                        @app.route('/')
+                                                                                                                                                                                def home():
+                                                                                                                                                                                            return jsonify({'service': 'KingDefrag', 'version': '3.11', 'status': 'online'})
+                                                                                                                                                                                                    @app.route('/health')
+                                                                                                                                                                                                            def health():
+                                                                                                                                                                                                                        return jsonify({'status': 'healthy'})
+                                                                                                                                                                                                                                if __name__ == '__main__':
+                                                                                                                                                                                                                                            import os
+                                                                                                                                                                                                                                                        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+                                                                                                                                                                                                                                                                EOF
+                                                                                                                                                                                                                                                                    - run: gcloud app deploy --quiet --promote
