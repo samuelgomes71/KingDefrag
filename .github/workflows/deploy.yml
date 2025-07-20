@@ -22,24 +22,18 @@ on:
                                                                     with:
                                                                             project_id: ${{ env.PROJECT_ID }}
                                                                                 - run: |
-                                                                                        cat > app.yaml << EOF
-                                                                                                runtime: python311
-                                                                                                        service: kingdefrag
-                                                                                                                EOF
-                                                                                                                        cat > requirements.txt << EOF
-                                                                                                                                Flask==3.0.0
-                                                                                                                                        EOF
-                                                                                                                                                cat > main.py << EOF
-                                                                                                                                                        from flask import Flask, jsonify
-                                                                                                                                                                app = Flask(__name__)
-                                                                                                                                                                        @app.route('/')
-                                                                                                                                                                                def home():
-                                                                                                                                                                                            return jsonify({'service': 'KingDefrag', 'version': '3.11', 'status': 'online'})
-                                                                                                                                                                                                    @app.route('/health')
-                                                                                                                                                                                                            def health():
-                                                                                                                                                                                                                        return jsonify({'status': 'healthy'})
-                                                                                                                                                                                                                                if __name__ == '__main__':
-                                                                                                                                                                                                                                            import os
-                                                                                                                                                                                                                                                        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
-                                                                                                                                                                                                                                                                EOF
-                                                                                                                                                                                                                                                                    - run: gcloud app deploy --quiet --promote
+                                                                                        echo "runtime: python311" > app.yaml
+                                                                                                echo "service: kingdefrag" >> app.yaml
+                                                                                                        echo "Flask==3.0.0" > requirements.txt
+                                                                                                                echo "from flask import Flask, jsonify" > main.py
+                                                                                                                        echo "app = Flask(__name__)" >> main.py
+                                                                                                                                echo "@app.route('/')" >> main.py
+                                                                                                                                        echo "def home():" >> main.py
+                                                                                                                                                echo "    return jsonify({'service': 'KingDefrag', 'version': '3.11', 'status': 'online'})" >> main.py
+                                                                                                                                                        echo "@app.route('/health')" >> main.py
+                                                                                                                                                                echo "def health():" >> main.py
+                                                                                                                                                                        echo "    return jsonify({'status': 'healthy'})" >> main.py
+                                                                                                                                                                                echo "if __name__ == '__main__':" >> main.py
+                                                                                                                                                                                        echo "    import os" >> main.py
+                                                                                                                                                                                                echo "    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))" >> main.py
+                                                                                                                                                                                                    - run: gcloud app deploy --quiet --promote
